@@ -1,0 +1,104 @@
+/*
+ * Дизайн-токены. Единственный источник цветов, шрифтов, радиусов и теней.
+ * Tailwind v4 генерирует из @theme утилиты: bg-canvas, text-ink, rounded-bubble, shadow-float…
+ *
+ * Принцип: интерфейс тихий (нейтральные + один синий акцент), цвет живёт только в маскотах.
+ */
+@theme {
+  /* Сбрасываем стандартную палитру Tailwind: bg-red-500 и т.п. не существуют — только наши токены. */
+  --color-*: initial;
+
+  --color-white: #ffffff;
+
+  /* Поверхности */
+  --color-canvas: #f6f7fa; /* фон страницы, холодный off-white */
+  --color-surface: #ffffff; /* карточки, пузыри агента, панель чата */
+  --color-dot: #dde1ea; /* точечная сетка фона */
+  --color-line: #e6e8ef; /* границы и разделители */
+
+  /* Текст */
+  --color-ink: #14161f; /* основной текст — 16.8:1 на canvas */
+  --color-ink-muted: #5e6475; /* второстепенный — 5.5:1 на canvas */
+
+  /* Акцент — тёмный кобальт. Сообщения пользователя, основная кнопка, фокус. */
+  --color-accent: #2438c9; /* белый текст — 8.45:1 */
+  --color-accent-hover: #1f30b0;
+  --color-accent-pressed: #1b2fa8;
+  --color-accent-soft: #e9ecfb; /* подложки: выделение, чипы */
+  --color-on-accent: #ffffff;
+
+  /* Статусы — только для сообщений об ошибке/успехе, не для декора */
+  --color-danger: #c93636; /* 4.8:1 на canvas (мелкий текст), белый текст на нём — 5.2:1 */
+  --color-success: #1f9d55;
+
+  /* Шрифты */
+  --font-sans: 'Onest Variable', system-ui, sans-serif;
+  --font-display: 'Unbounded Variable', 'Onest Variable', sans-serif; /* только имена маскотов и крупные заголовки */
+
+  /* Радиусы — всё мягкое, как сами маскоты */
+  --radius-control: 0.875rem; /* 14px: инпуты, мелкие кнопки */
+  --radius-control-inner: 0.625rem; /* 10px: элемент внутри control с padding 4px (сегменты переключателя) */
+  --radius-bubble: 1.25rem; /* 20px: сообщения */
+  --radius-card: 1.5rem; /* 24px: карточки, панель чата */
+
+  /*
+   * Дыхание маскота в покое. Именно CSS-анимация, а не Framer Motion:
+   * её браузер выполняет на GPU (в Firefox — OMTA). JS-анимация scale в Firefox
+   * перерисовывает SVG на каждом кадре с привязкой к пикселям → движение «ступеньками».
+   * Использование: class="origin-bottom motion-safe:animate-breathe"
+   */
+  --animate-breathe: breathe 1.6s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+
+  @keyframes breathe {
+    to {
+      transform: scale(0.98, 1.04);
+    }
+  }
+
+  /*
+   * Точки «печатает…». Задержку для 2-й и 3-й точки задаёт компонент (animation-delay),
+   * чтобы точки прыгали волной.
+   */
+  --animate-typing-dot: typing-dot 0.9s ease-in-out infinite;
+
+  @keyframes typing-dot {
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.4;
+    }
+    40% {
+      transform: translateY(-3px);
+      opacity: 1;
+    }
+  }
+
+  /* Новая полоска громкости при записи голосового «вырастает» из центра */
+  --animate-bar-in: bar-in 0.15s ease-out;
+
+  @keyframes bar-in {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  /* Тени — одна, для плавающих элементов (виджет, открытый чат) */
+  --shadow-float: 0 12px 32px -8px rgb(20 22 31 / 0.14), 0 2px 6px rgb(20 22 31 / 0.06);
+}
+
+/*
+ * Цвета маскотов. `static` — Tailwind выводит эти переменные всегда, даже если классов с ними нет:
+ * SVG маскота подставляет их динамически через style (var(--color-mascot-${color})),
+ * и без static Tailwind выкинул бы их из сборки как неиспользуемые.
+ */
+@theme static {
+  /* Используются только внутри SVG персонажей. */
+  --color-mascot-orange: #ff7a2f;
+  --color-mascot-blue: #3b6cff;
+  --color-mascot-pink: #f04dd8;
+  --color-mascot-green: #3dc75a;
+  --color-mascot-coal: #1a1b22;
+  --color-mascot-milk: #ecebe8;
+  --color-mascot-eye: #ffffff; /* глаза на тёмных телах */
+  --color-mascot-eye-dark: #1a1b22; /* глаза на светлых телах */
+}
