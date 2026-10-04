@@ -13,7 +13,7 @@ export function TypingIndicator() {
                     aria-hidden
                     className="size-1.5 rounded-full bg-ink-muted motion-safe:animate-typing-dot"
                     // Каждая следующая точка стартует чуть позже — получается волна
-                    style={{ animationDelay: `${index * 0.15}ms` }}
+                    style={{ animationDelay: `${index * 0.15}s` }}
                 />
             ))}
             <span className="sr-only">Печатает...</span>
