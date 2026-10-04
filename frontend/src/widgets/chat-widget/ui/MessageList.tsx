@@ -17,7 +17,7 @@ export function MessageList({
     useEffect(() => {
         const list = listRef.current;
         list?.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
-    }, [messages, isAgentTyping]);
+    }, [messages.length, isAgentTyping]);
 
     return (
         <div
