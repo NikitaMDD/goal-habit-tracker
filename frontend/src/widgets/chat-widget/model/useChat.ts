@@ -1,5 +1,5 @@
 import type {MascotEmotion, MascotPersona} from "@/entities/mascot";
-import type {ChatMessage, MessageStatus, TextChatMessage} from "@/entities/message";
+import type {ChatMessage, MessageStatus, VoiceChatMessage} from "@/entities/message";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {sendMessageToServer, waitForAgentReply} from "@/widgets/chat-widget/api/fakeAgent";
 
@@ -35,7 +35,7 @@ export function useChat(persona: MascotPersona) {
             : message
         )))
 
-    const deliver = useCallback(async (message: TextChatMessage)=> {
+    const deliver = useCallback(async (message: ChatMessage)=> {
         setStatus(message.id, 'sending');
         try {
             await sendMessageToServer();
@@ -60,7 +60,7 @@ export function useChat(persona: MascotPersona) {
 
     const send = useCallback(
         (text: string) => {
-            const message: TextChatMessage = {
+            const message: ChatMessage = {
                 id: crypto.randomUUID(),
                 kind: 'text',
                 author: 'user',
@@ -74,10 +74,24 @@ export function useChat(persona: MascotPersona) {
         [deliver],
     )
 
-    const retry = useCallback(
-        (message: ChatMessage) => {
-            if (message.kind === 'text') void deliver(message);
+    const sendVoice = useCallback(
+        (voice: Pick<VoiceChatMessage, 'audioUrl' | 'durationSec' | 'waveform'>) => {
+            const message: ChatMessage = {
+                id: crypto.randomUUID(),
+                kind: 'voice',
+                author: 'user',
+                status: 'sending',
+                createdAt: now(),
+                ...voice
+            }
+            setMessages((list) => [...list, message]);
+            void deliver(message);
         },
+        [deliver],
+    );
+
+    const retry = useCallback(
+        (message: ChatMessage) => void deliver(message),
         [deliver],
     )
 
@@ -92,5 +106,5 @@ export function useChat(persona: MascotPersona) {
                 ? 'effort'
                 : 'neutral';
 
-    return { messages, isAgentTyping, mascotEmotion, send, retry };
+    return { messages, isAgentTyping, mascotEmotion, send, sendVoice, retry, };
 }
