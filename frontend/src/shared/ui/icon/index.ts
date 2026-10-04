@@ -4,5 +4,7 @@ export {
     PauseIcon,
     PlayIcon,
     SendIcon,
-    CloseIcon
+    CloseIcon,
+    MicIcon,
+    TrashIcon,
 } from './icons'
