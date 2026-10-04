@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+@import '../../shared/config/theme/tokens.css';
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+}
+
+/* Фон из референса: мелкая точечная сетка. */
+@utility bg-dots {
+  background-image: radial-gradient(var(--color-dot) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
