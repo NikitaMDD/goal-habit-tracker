@@ -2,6 +2,8 @@ from typing import Literal, Union, Annotated, Self
 
 from pydantic import BaseModel, Field, StringConstraints, model_validator
 
+from app.agent.personas import PersonaId
+
 NonEmptyStr = Annotated[
     str,
     StringConstraints(strip_whitespace=True, min_length=1),
@@ -54,6 +56,7 @@ ChatMessage = Annotated[
 ]
 
 class ChatRequest(BaseModel):
+    persona_id: PersonaId = Field(description="ID персоны модели")
     messages: list[ChatMessage] = Field(min_length=1, description="Вся переписка с агентом")
 
     @model_validator(mode="after")
