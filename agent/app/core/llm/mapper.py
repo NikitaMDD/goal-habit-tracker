@@ -33,15 +33,13 @@ def to_openai_message(message: ChatMessage) -> ChatCompletionMessageParam:
             #  как в _assistant (один подход к «невозможной ветке»). Текст «Неизвестное событие» — из примера.
             raise ValueError(f"Неизвестное событие: {type(message).__name__}")
 
-# TODO(review): сделать system_prompt обязательным (str без None) — персона есть всегда,
-#  а `if system_prompt:` молча пропускает None и "" → модель остаётся без инструкций.
 def to_openai_messages(
     messages: list[ChatMessage],
-    system_prompt: str | None = None,
+    system_prompt: str,
 ) -> list[ChatCompletionMessageParam]:
-    result: list[ChatCompletionMessageParam] = []
-    if system_prompt:
-        result.append({"role": "system", "content": system_prompt})
+    result: list[ChatCompletionMessageParam] = [
+        {"role": "system", "content": system_prompt}
+    ]
     result.extend(to_openai_message(m) for m in messages)
     return result
 
