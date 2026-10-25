@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, HTTPException
 from openai import APIConnectionError, APITimeoutError, AsyncOpenAI
@@ -9,6 +8,9 @@ from app.core.llm.mapper import to_openai_messages
 from app.schemas.chat import ChatRequest, ChatResponse, TextPart
 
 from app.core.config import settings
+
+from app.agent.personas import PERSONAS
+from app.agent.prompts import build_system_prompt
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,7 +30,8 @@ def health() -> dict[str, str]:
 
 @app.post("/chat")
 async def chat(request: ChatRequest, client: LLMClient) -> ChatResponse:
-    messages = to_openai_messages(request.messages)
+    persona = PERSONAS[request.persona_id]
+    messages = to_openai_messages(request.messages, build_system_prompt(persona))
     try:
         reply = await generate_reply(client, messages)
     except (APIConnectionError, APITimeoutError) as e:
