@@ -1,5 +1,5 @@
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolParam, ChatCompletionMessage
 
 from app.core.config import settings
 
@@ -9,19 +9,17 @@ from fastapi import Depends, Request
 async def generate_reply(
     client: AsyncOpenAI,
     messages: list[ChatCompletionMessageParam],
+    tools: list[ChatCompletionToolParam] | None = None,
     temperature: float = 0.7,
-) -> str:
+) -> ChatCompletionMessage:
     response = await client.chat.completions.create(
         model=settings.llm_model,
         messages=messages,
+        tools=tools,
         temperature=temperature,
     )
 
-    content = response.choices[0].message.content
-    if not content:
-        raise ValueError("Модель вернула пустой ответ")
-
-    return content.strip()
+    return response.choices[0].message
 
 def get_llm_client(request: Request) -> AsyncOpenAI:
     return request.app.state.llm_client
