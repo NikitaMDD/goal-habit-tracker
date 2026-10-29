@@ -4,3 +4,4 @@
 !.vscode/extensions.json
 .env
 *.log
+CLAUDE.local.md
